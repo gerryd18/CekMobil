@@ -4,6 +4,9 @@ export interface CustomButtonProps{
     title:string;
     containerStyles?:string;
     handleClick?: MouseEventHandler<HTMLButtonElement>;
+    textStyles?:string;
+    rightIcon?:string;
+    isDisabled? :boolean,
     btnType?:"button" | "submit"; //button optional either button or submit type
 }
 
@@ -26,3 +29,10 @@ export interface CarProps {
   transmission: string;
   year: number;
 }
+
+export interface CarDetailsProps{
+  isOpen:boolean;
+  closeModal: ()=> void;
+  car:CarProps;
+}
+
