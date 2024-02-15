@@ -4,45 +4,59 @@ import SearchBar from "@/components/SearchBar";
 import Image from "next/image";
 import { fetchCars } from "@/utils";
 import CarCard from "@/components/CarCard";
+import { fuels, yearsOfProduction } from "@/constants";
+import ShowMore from "@/components/ShowMore";
 
-export default async function Home() {
+export default async function Home({ searchParams }: any) {
+  //server side rendering, not using use client
+  const allCars = await fetchCars({
+    manufacturer: searchParams.manufacturer || "",
+    year: searchParams.year || 2022,
+    fuel: searchParams.fuel || "",
+    limit: searchParams.limit || 10,
+    model: searchParams.model || "",
+  });
 
-
-//server side rendering, not using use client
-const allCars = await fetchCars();
-
-const isDataEmpty = !Array.isArray(allCars) || allCars.length <1 || !allCars; return ( <main className="overflow-hidden">
-    <Hero />
-    <div className="mt-12 padding-x padding-y max-width" id="discover">
+  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
+  return (
+    <main className="overflow-hidden">
+      <Hero />
+      <div className="mt-12 padding-x padding-y max-width" id="discover">
         <div className="home__text-container">
-            <h1 className="text-4xl font-extrabold">Car Catalogue</h1>
-            <p>Explore the cars you might like</p>
+          <h1 className="text-4xl font-extrabold">Car Catalogue</h1>
+          <p>Explore the cars you might like</p>
         </div>
 
         <div className="home__filters">
-            {/* searchbar */}
-            <SearchBar />
-            <div className="home__filter-container">
-                <CustomFilter title="fuel" />
-                <CustomFilter title="year" />
-            </div>
+          {/* searchbar */}
+          <SearchBar />
+          <div className="home__filter-container">
+            <CustomFilter title="fuel" options={fuels} />
+            <CustomFilter title="year" options={yearsOfProduction} />
+          </div>
         </div>
 
         {!isDataEmpty ? (
-        <section>
+          <section>
             <div className="home__cars-wrapper">
-              {allCars.map((car) => <CarCard car={car}/>)}
+              {allCars.map((car) => (
+                <CarCard car={car} />
+              ))}
             </div>
-        </section>
+
+            <ShowMore
+              pageNumber={(searchParams.limit || 10) / 10}
+              isNext={(searchParams.limit || 10) > allCars.length}
+            />
+          </section>
         ) : (
-        //kalo datanya gada
-        <div className="home__error-container">
+          //kalo datanya gada
+          <div className="home__error-container">
             <h2 className="text-black text-xl font-bold">Oops, no results</h2>
             <p>{allCars?.message}</p>
-        </div>
+          </div>
         )}
-
-    </div>
+      </div>
     </main>
-    );
-    }
+  );
+}

@@ -90,7 +90,6 @@ const SearchManufacturer = ({
                           ></span>
                         ) : null}
                       </>
-                    
                     )}
                   </Combobox.Option>
                 ))
